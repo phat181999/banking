@@ -4,7 +4,7 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import Config, { getTypeOrmConfig } from './config/ormConfig'
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { UsersModule } from './modules/users/users.module';
+import { CustomersModule } from './modules/customers/customers.module';
 
 console.log()
 
@@ -20,7 +20,7 @@ console.log()
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => getTypeOrmConfig(configService),
     }),
-    UsersModule,
+    CustomersModule
   ],
   controllers: [AppController],
   providers: [AppService],
