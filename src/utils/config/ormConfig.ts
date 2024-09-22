@@ -9,7 +9,7 @@ export const getTypeOrmConfig = (configService: ConfigService): TypeOrmModuleOpt
   username: configService.get<string>('DB_USERNAME'),
   password: configService.get<string>('DB_PASSWORD'),
   database: configService.get<string>('DB_DATABASE'),
-  entities: [join(__dirname, '/../**/*.entity.{ts,js}')], // Adjust path according to your structure
+  entities: [join(__dirname, '../../**/*.entity.{ts,js}')], // Adjust path according to your structure
   migrations: ['src/migrations/*{.ts,.js}'],
   synchronize: true, // Set to false in production
 });

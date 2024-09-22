@@ -7,13 +7,13 @@ export class Payments {
   PaymentID: number;
 
   @Column({ type: 'date' })
-  PaymentDate: Date;
+  payment_date: Date;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
-  Amount: number;
+  amount: number;
 
   @Column()
-  PaymentMethod: string;
+  payment_method: string;
 
   @CreateDateColumn()
   createAt: Date;

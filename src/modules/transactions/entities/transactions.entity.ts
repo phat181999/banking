@@ -1,5 +1,5 @@
-import { Accounts } from 'src/modules/accounts/entities/accounts.entity';
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Customers } from 'src/modules/customers/entities/customers.entity';
 
 @Entity()
 export class Transactions {
@@ -7,16 +7,16 @@ export class Transactions {
   TransactionID: number;
 
   @Column()
-  TransactionType: string;
+  transaction_type: string;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
-  Amount: number;
+  amount: number;
 
   @Column({ type: 'timestamp' })
-  TransactionDate: Date;
+  transaction_date: Date;
 
   @Column({ nullable: true })
-  Description: string;
+  description: string;
 
   @CreateDateColumn()
   createAt: Date;
@@ -24,6 +24,6 @@ export class Transactions {
   @UpdateDateColumn()
   updateAt: Date;
 
-  @ManyToOne(() => Accounts, account => account.transactions)
-  account: Accounts;
+  @ManyToOne(() => Customers, customer => customer.transactions)
+  customer: Customers;
 }

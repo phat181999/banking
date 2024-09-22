@@ -8,22 +8,22 @@ export class Loans {
   LoanID: number;
 
   @Column()
-  LoanType: string;
+  loan_type: string;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
-  LoanAmount: number;
+  loan_amount: number;
 
   @Column({ type: 'decimal', precision: 5, scale: 2 })
-  InterestRate: number;
+  interset_rate: number;
 
   @Column({ type: 'date' })
-  StartDate: Date;
+  start_date: Date;
 
   @Column({ type: 'date' })
-  EndDate: Date;
+  end_date: Date;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
-  OutstandingAmount: number;
+  out_standing_amount: number;
 
   @CreateDateColumn()
   createAt: Date;

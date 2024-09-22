@@ -2,11 +2,12 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import Config, { getTypeOrmConfig } from './config/ormConfig'
+import { getTypeOrmConfig } from './utils/config/ormConfig'
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CustomersModule } from './modules/customers/customers.module';
-
-console.log()
+import { AuthModule } from './modules/auths/auths.module';
+import { LoggerModule } from './common/logger/logger.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -20,7 +21,17 @@ console.log()
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => getTypeOrmConfig(configService),
     }),
-    CustomersModule
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'), 
+        signOptions: { expiresIn: '1h' },
+      }),
+    }),
+    LoggerModule,
+    CustomersModule,
+    
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,29 +1,38 @@
-import { Accounts } from 'src/modules/accounts/entities/accounts.entity';
 import { Loans } from 'src/modules/loans/entities/loans.entity';
+import { Transactions } from 'src/modules/transactions/entities/transactions.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity()
 export class Customers {
   @PrimaryGeneratedColumn()
-  CustomerID: number;
+  customer_id: number;
 
-  @Column()
-  FirstName: string;
+  @Column({ length: 100 })
+  first_name: string;
 
-  @Column()
-  LastName: string;
+  @Column({ length: 100})
+  last_name: string;
 
   @Column({ type: 'date' })
-  DateOfBirth: Date;
+  date_of_birth: Date;
+
+  @Column({ length: 200 })
+  address: string;
+
+  @Column({ length: 50 })
+  phone: string;
+
+  @Column({ length: 100, unique: true })
+  email: string;
+
+  @Column({default: 'user'})
+  account_type: string;
 
   @Column()
-  Address: string;
+  password: string;
 
-  @Column()
-  Phone: string;
-
-  @Column()
-  Email: string;
+  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  balance: number;
 
   @CreateDateColumn()
   createAt: Date;
@@ -31,9 +40,9 @@ export class Customers {
   @UpdateDateColumn()
   updateAt: Date;
 
-  @OneToMany(() => Accounts, account => account.customer)
-  accounts: Accounts[];
-
   @OneToMany(() => Loans, loan => loan.customer)
   loans: Loans[];
+
+  @OneToMany(() => Transactions, transaction => transaction.customer)
+  transactions: Transactions[];
 }
