@@ -1,18 +1,18 @@
 // src/repositories/customer.repository.ts
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { Customers } from '../entities/customers.entity';
+import { CustomersEntity } from '../entities/customers.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateAccountDTO } from '../dtos';
 
 @Injectable()
 export class CustomerRepository {
   constructor(
-    @InjectRepository(Customers)
-    private readonly customerRepo: Repository<Customers>,
+    @InjectRepository(CustomersEntity)
+    private readonly customerRepo: Repository<CustomersEntity>,
   ) {}
 
-  public async createCustomerRepo(customer: CreateAccountDTO): Promise<Customers[]> {
+  public async createCustomerRepo(customer: CreateAccountDTO): Promise<CustomersEntity[]> {
     try {
       const { first_name, last_name, date_of_birth, address, phone, email, account_type, balance, password } = customer;
       const query = `INSERT INTO customers (first_name, last_name, date_of_birth, address, phone, email, account_type, balance, password) 
@@ -26,7 +26,7 @@ export class CustomerRepository {
     }
   }
 
-  public async getCustomersRepo(): Promise<Customers[]> {  
+  public async getCustomersRepo(): Promise<CustomersEntity[]> {  
     try {
       const query = `SELECT * FROM customers`;
       const result = await this.customerRepo.query(query);
@@ -36,7 +36,7 @@ export class CustomerRepository {
     }
   }
 
-  public async getCustomerRepo(customer_id: number): Promise<Customers[]> {  
+  public async getCustomerRepo(customer_id: number): Promise<CustomersEntity[]> {  
     try {
       const query = `SELECT * FROM customers WHERE customer_id = $1`;
       const result = await this.customerRepo.query(query,[customer_id]);
@@ -46,7 +46,7 @@ export class CustomerRepository {
     }
   }
 
-  public async loginCustomerRepo(email: string, password: string): Promise<Customers> {
+  public async loginCustomerRepo(email: string, password: string): Promise<CustomersEntity> {
     try {
       const query = `SELECT * FROM customers WHERE email = $1 AND password = $2`;
       const result = await this.customerRepo.query(query, [email, password]);

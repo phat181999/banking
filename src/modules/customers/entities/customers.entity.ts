@@ -3,7 +3,7 @@ import { Transactions } from 'src/modules/transactions/entities/transactions.ent
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity()
-export class Customers {
+export class CustomersEntity {
   @PrimaryGeneratedColumn()
   customer_id: number;
 
@@ -30,6 +30,9 @@ export class Customers {
 
   @Column()
   password: string;
+
+  @Column({default: 'USER'})
+  role: string;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   balance: number;
