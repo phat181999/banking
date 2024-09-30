@@ -48,4 +48,5 @@ export class CustomersEntity {
 
   @OneToMany(() => Transactions, transaction => transaction.customer)
   transactions: Transactions[];
+  lenght: number;
 }

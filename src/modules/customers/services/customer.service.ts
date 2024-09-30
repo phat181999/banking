@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, BadRequestException, UnauthorizedException, InternalServerErrorException } from '@nestjs/common';
 import { CustomerRepository } from '../repositories/customer.repository';
 import { CreateAccountDTO } from '../dtos';
 import { CustomersEntity } from '../entities/customers.entity';
@@ -63,7 +63,19 @@ export class CustomerService {
       return customer;
     } catch (error) {
       this.logger.error(`Login failed for email: ${email}`, error);
-      throw new UnauthorizedException('Invalid email or password');
+    }
+  }
+
+  public async getCustomerByEmail(email: string): Promise<CustomersEntity> {
+    try {
+      const result =  await this.customerRepo.getCustomerByEmail(email);
+      if(result.lenght === 0) {
+        throw new BadRequestException('Customer Not Found!');
+      } 
+      return result;
+    }catch(error){
+      this.logger.error(`getCustomerByEmail: ${email}`, error);
+      throw new InternalServerErrorException('An error occurred while fetching the customer.');
     }
   }
 }

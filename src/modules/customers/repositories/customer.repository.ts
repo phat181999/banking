@@ -55,4 +55,14 @@ export class CustomerRepository {
       throw error;
     }
   }
+
+  public async getCustomerByEmail(email: string):Promise<CustomersEntity> {
+    try {
+      const query = `SELECT * FROM customers WHERE email = $1`;
+      const result = await this.customerRepo.query(query, [email]);
+      return result[0];
+    }catch(error) {
+      throw error;
+    }
+  }
 }

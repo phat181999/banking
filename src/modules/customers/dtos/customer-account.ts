@@ -20,7 +20,7 @@ export class CreateAccountDTO {
     
     @IsDateString()
     @IsNotEmpty()
-    readonly date_of_birth: string;
+    readonly date_of_birth: Date;
 
     @IsString()
     @IsNotEmpty()

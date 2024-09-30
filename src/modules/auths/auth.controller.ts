@@ -1,9 +1,8 @@
 import { Controller, Get, UseGuards, Req, Res, Body, Next, HttpStatus, BadRequestException, Post } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { AuthService } from './auth.service';
-import { SignInDto } from './dtos/signIn.dto';
-import { NextFunction, Response } from 'express';
 import { CustomLoggerService } from 'src/common/logger/logger.service';
+import { AuthService } from './services/auth.service';
+import { SignInDto } from './dtos/signIn.dto';
 import { SignInPayloadDto } from './dtos/signInPayload.dto';
 
 @Controller('auth')
@@ -14,20 +13,18 @@ export class AuthController {
     private logger: CustomLoggerService
   ) {}
 
-  // @Post('login')
-  // async signIn(
-  //   @Body() signInDto: SignInDto,
-  //   @Next() next: NextFunction
-  // ): Promise<SignInPayloadDto> {
-  //   const {email, password} = signInDto;
-  //   try {
-  //     const result = await this.authService.signIn(email, password);
-  //     // return new SignInPayloadDto(user.toDto(), token);
-  //   }catch(error) {
-  //     this.logger.error(`Failed to create customer due to unexpected error`, error);
-  //     next(new BadRequestException('Failed to create customer due to unexpected error', error));
-  //   } 
-  // }
+  @Post('login')
+  async signIn(
+    @Body() signInDto: SignInDto,
+  ): Promise<SignInPayloadDto> {
+      const customer = await this.authService.validateCustomer(signInDto);
+      const token = await this.authService.createToken(customer);
+      const result: SignInPayloadDto = {
+        user: customer, // Populate user with the customer data
+        token: token,   // Populate token with the generated token data
+      };
+      return result;
+  }
 
   @Get('callback')
   @UseGuards(AuthGuard('okta'))
