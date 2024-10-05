@@ -7,7 +7,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CustomersModule } from './modules/customers/customers.module';
 import { AuthModule } from './modules/auths/auths.module';
 import { LoggerModule } from './common/logger/logger.module';
-import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [

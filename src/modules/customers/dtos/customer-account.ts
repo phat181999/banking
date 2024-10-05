@@ -46,7 +46,7 @@ export class CreateAccountDTO {
     readonly password: string;
 
     @IsString()
-    // @IsEnum(Role, { each: true })
+    @IsEnum(Role, { each: true })
     readonly role: string;
 
     @IsInt()

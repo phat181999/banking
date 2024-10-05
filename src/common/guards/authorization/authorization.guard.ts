@@ -1,7 +1,4 @@
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { Request } from 'express';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthService } from 'src/modules/auths/services/auth.service';
 
 
@@ -24,7 +21,6 @@ export class AuthorizationGuard implements CanActivate {
       request.decodedData = resp;
       return true;
     } catch (error) {
-      console.log('auth error - ', error.message);
       throw new ForbiddenException(error.message || 'session expired! Please sign In');
     }
   }
