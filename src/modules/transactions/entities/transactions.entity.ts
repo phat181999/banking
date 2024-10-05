@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { Customers } from 'src/modules/customers/entities/customers.entity';
+import { CustomersEntity } from 'src/modules/customers/entities/customers.entity';
 
 @Entity()
 export class Transactions {
@@ -24,6 +24,6 @@ export class Transactions {
   @UpdateDateColumn()
   updateAt: Date;
 
-  @ManyToOne(() => Customers, customer => customer.transactions)
-  customer: Customers;
+  @ManyToOne(() => CustomersEntity, customer => customer.transactions)
+  customer: CustomersEntity;
 }

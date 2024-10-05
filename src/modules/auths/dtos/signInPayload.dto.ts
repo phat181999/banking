@@ -11,8 +11,8 @@ export class SignInPayloadDto {
 //   @ApiProperty({ type: () => TokenPayloadDto })
   readonly token: TokenPayloadDto;
 
-  constructor(user: CreateAccountDTO, token: TokenPayloadDto) {
-    this.user = user;
-    this.token = token;
-  }
+  // constructor(user: CreateAccountDTO, token: TokenPayloadDto) {
+  //   this.user = user;
+  //   this.token = token;
+  // }
 }

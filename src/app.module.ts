@@ -7,7 +7,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CustomersModule } from './modules/customers/customers.module';
 import { AuthModule } from './modules/auths/auths.module';
 import { LoggerModule } from './common/logger/logger.module';
-import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -21,17 +20,9 @@ import { JwtModule } from '@nestjs/jwt';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => getTypeOrmConfig(configService),
     }),
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET'), 
-        signOptions: { expiresIn: '1h' },
-      }),
-    }),
     LoggerModule,
     CustomersModule,
-    
+    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService],

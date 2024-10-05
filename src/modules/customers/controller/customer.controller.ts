@@ -3,6 +3,7 @@ import { CreateAccountDTO } from '../dtos';
 import { CustomerService } from '../services/customer.service';
 import { CustomLoggerService } from 'src/common/logger/logger.service';
 import { Response, NextFunction } from 'express';
+import { AuthorizationGuard } from 'src/common/guards/authorization/authorization.guard';
 
 @Controller('customer')
 export class CustomersController {
@@ -27,7 +28,7 @@ export class CustomersController {
     } 
   }
 
-  // @UseGuards(AuthorizationGuard)
+  @UseGuards(AuthorizationGuard)
   @Get('')
   async getCustomers(
     @Res() res: Response,

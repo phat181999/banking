@@ -1,4 +1,4 @@
-import { Customers } from 'src/modules/customers/entities/customers.entity';
+import { CustomersEntity } from 'src/modules/customers/entities/customers.entity';
 import { Payments } from 'src/modules/payments/entities/payments.entity';
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
@@ -31,8 +31,8 @@ export class Loans {
   @UpdateDateColumn()
   updateAt: Date;
 
-  @ManyToOne(() => Customers, customer => customer.loans)
-  customer: Customers;
+  @ManyToOne(() => CustomersEntity, customer => customer.loans)
+  customer: CustomersEntity;
 
   @OneToMany(() => Payments, payment => payment.loan)
   payments: Payments[];

@@ -1,6 +1,6 @@
 import { IsAlpha, IsDateString, IsEnum, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, Matches, MaxLength, Min, MinLength } from 'class-validator';
 
-enum Permissions {
+enum Role {
     ADMIN = "ADMIN",
     USER = "USER",
     DEVELOPER = "DEVELOPER",
@@ -20,7 +20,7 @@ export class CreateAccountDTO {
     
     @IsDateString()
     @IsNotEmpty()
-    readonly date_of_birth: string;
+    readonly date_of_birth: Date;
 
     @IsString()
     @IsNotEmpty()
@@ -45,9 +45,9 @@ export class CreateAccountDTO {
     })
     readonly password: string;
 
-    @IsNotEmpty()
-    @IsEnum(Permissions, { each: true })
-    permissions: Permissions[];
+    @IsString()
+    @IsEnum(Role, { each: true })
+    readonly role: string;
 
     @IsInt()
     @Min(0)
