@@ -14,10 +14,10 @@ export class CustomerRepository {
 
   public async createCustomerRepo(customer: CreateAccountDTO): Promise<CustomersEntity[]> {
     try {
-      const { first_name, last_name, date_of_birth, address, phone, email, account_type, balance, password } = customer;
-      const query = `INSERT INTO customers_entity (first_name, last_name, date_of_birth, address, phone, email, account_type, balance, password) 
-                  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`;
-      const params = [first_name, last_name, date_of_birth, address, phone, email, account_type, balance, password];
+      const { first_name, last_name, date_of_birth, address, phone, email, account_type, balance, password, role, avatar } = customer;
+      const query = `INSERT INTO customer (first_name, last_name, date_of_birth, address, phone, email, account_type, balance, password, role, avatar) 
+                  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *`;
+      const params = [first_name, last_name, date_of_birth, address, phone, email, account_type, balance, password, role, avatar];
   
       const result = await this.customerRepo.query(query, params);
       return result[0];
@@ -28,7 +28,7 @@ export class CustomerRepository {
 
   public async getCustomersRepo(): Promise<CustomersEntity[]> {  
     try {
-      const query = `SELECT * FROM customers_entity`;
+      const query = `SELECT * FROM customer`;
       const result = await this.customerRepo.query(query);
       return result
     }catch(error) {
@@ -38,7 +38,7 @@ export class CustomerRepository {
 
   public async getCustomerRepo(customer_id: number): Promise<CustomersEntity[]> {  
     try {
-      const query = `SELECT * FROM customers_entity WHERE customer_id = $1`;
+      const query = `SELECT * FROM customer WHERE customer_id = $1`;
       const result = await this.customerRepo.query(query,[customer_id]);
       return result[0];
     }catch(error) {
@@ -48,7 +48,7 @@ export class CustomerRepository {
 
   public async loginCustomerRepo(email: string, password: string): Promise<CustomersEntity> {
     try {
-      const query = `SELECT * FROM customers_entity WHERE email = $1 AND password = $2`;
+      const query = `SELECT * FROM customer WHERE email = $1 AND password = $2`;
       const result = await this.customerRepo.query(query, [email, password]);
       return result[0];
     } catch (error) {
@@ -58,7 +58,7 @@ export class CustomerRepository {
 
   public async getCustomerByEmail(email: string):Promise<CustomersEntity> {
     try {
-      const query = `SELECT * FROM customers_entity WHERE email = $1`;
+      const query = `SELECT * FROM customer WHERE email = $1`;
       const result = await this.customerRepo.query(query, [email]);
       return result[0];
     }catch(error) {

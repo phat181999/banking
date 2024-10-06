@@ -1,9 +1,10 @@
-import { Controller, Post, Body, BadRequestException, Res, Next, HttpStatus, Get, Param, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, BadRequestException, Res, Next, HttpStatus, Get, Param, UseGuards, UseInterceptors, UploadedFile, UsePipes, ValidationPipe } from '@nestjs/common';
 import { CreateAccountDTO } from '../dtos';
 import { CustomerService } from '../services/customer.service';
 import { CustomLoggerService } from 'src/common/logger/logger.service';
 import { Response, NextFunction } from 'express';
 import { AuthorizationGuard } from 'src/common/guards/authorization/authorization.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('customer')
 export class CustomersController {
@@ -13,15 +14,18 @@ export class CustomersController {
   ) {}
 
   @Post('/')
+  @UseGuards(AuthorizationGuard)
+  @UseInterceptors(FileInterceptor('avatar'))
+  @UsePipes(new ValidationPipe({ transform: true}))
   async createCustomer(
     @Body() createAccountDTO: CreateAccountDTO,
     @Res() res: Response,
-    @Next() next: NextFunction
+    @Next() next: NextFunction,
+    @UploadedFile() avatar: Express.Multer.File
   ): Promise<void> {
     try {
-      const customer = await this.customerService.createCustomer(createAccountDTO);
+      const customer = await this.customerService.createCustomer(createAccountDTO, avatar);
       res.status(HttpStatus.CREATED).json({ status: HttpStatus.CREATED, messages: 'Created Customer', customer: customer });
-
     } catch(error) {
       this.logger.error(`Failed to create customer due to unexpected error`, error);
       next(new BadRequestException('Failed to create customer due to unexpected error', error));
@@ -43,6 +47,7 @@ export class CustomersController {
     } 
   }
 
+  @UseGuards(AuthorizationGuard)
   @Get('/:customer_id/search')
   async getCustomer(
     @Param('customer_id') customer_id: number,

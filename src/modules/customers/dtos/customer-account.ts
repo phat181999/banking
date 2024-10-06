@@ -1,10 +1,5 @@
 import { IsAlpha, IsDateString, IsEnum, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, Matches, MaxLength, Min, MinLength } from 'class-validator';
-
-enum Role {
-    ADMIN = "ADMIN",
-    USER = "USER",
-    DEVELOPER = "DEVELOPER",
-}
+import { Role } from 'src/constants/customers.constant';
 
 export class CreateAccountDTO {
 
@@ -18,7 +13,7 @@ export class CreateAccountDTO {
     @IsNotEmpty()
     readonly last_name: string;
     
-    @IsDateString()
+    // @IsDateString()file
     @IsNotEmpty()
     readonly date_of_birth: Date;
 
@@ -26,7 +21,7 @@ export class CreateAccountDTO {
     @IsNotEmpty()
     readonly address: string;
 
-    @IsNumber()
+    // @IsNumber()
     @IsNotEmpty()
     readonly phone: string;
 
@@ -37,6 +32,9 @@ export class CreateAccountDTO {
     @IsNotEmpty()
     readonly email: string;
 
+   
+    readonly avatar: string;
+
     @IsNotEmpty()
     @MinLength(8)
     @MaxLength(20)
@@ -45,12 +43,13 @@ export class CreateAccountDTO {
     })
     readonly password: string;
 
-    @IsString()
+    @IsString({})
+    @IsOptional()
     @IsEnum(Role, { each: true })
-    readonly role: string;
+    readonly role: string = Role.USER;
 
-    @IsInt()
-    @Min(0)
+    // @IsInt()
+    // @Min(0)
     @IsOptional() // This makes the field optional in the incoming request
     readonly balance: number = 0;
 }

@@ -5,6 +5,9 @@ import { CustomersEntity } from '../entities/customers.entity';
 import { CustomLoggerService } from 'src/common/logger/logger.service';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
+import { CloudinaryResponse } from '../dtos/cloudinary-response.dto';
+import { v2 as cloudinary } from 'cloudinary';
+const streamifier = require('streamifier');
 
 @Injectable()
 export class CustomerService {
@@ -15,18 +18,21 @@ export class CustomerService {
     private configService: ConfigService
   ) {}
 
-  async createCustomer(customer: CreateAccountDTO): Promise<CustomersEntity[]> {
+  async createCustomer(customer: CreateAccountDTO, file: Express.Multer.File): Promise<CustomersEntity[]> {
     try {
-      const { first_name, last_name, date_of_birth, address, phone, email, account_type, balance, password } = customer;
+      const { first_name, last_name, date_of_birth, address, phone, email, account_type, balance, password, avatar } = customer;
       if (!first_name || !last_name || !date_of_birth || !address || !phone || !email || !account_type || balance === undefined || !password) {
         throw new BadRequestException('Missing required fields');
       }
       const saltOrRound = this.configService.get<number>('SALTORROUNDS');
       const salt = await bcrypt.genSalt(+saltOrRound);
       const hashedPass = await bcrypt.hash(password, salt);
+
+      const avatarRes = await this.uploadFile(file);
       const createCustomer = {
         ...customer,
-        password: hashedPass
+        password: hashedPass,
+        avatar: avatarRes.url
       }
       return await this.customerRepo.createCustomerRepo(createCustomer);
     } catch(error) {
@@ -78,4 +84,18 @@ export class CustomerService {
       throw new InternalServerErrorException('An error occurred while fetching the customer.');
     }
   }
+
+  uploadFile(file: Express.Multer.File): Promise<CloudinaryResponse> {
+    return new Promise<CloudinaryResponse>((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        (error, result) => {
+          if (error) return reject(error);
+          resolve(result);
+        },
+      );
+
+      streamifier.createReadStream(file.buffer).pipe(uploadStream);
+    });
+  }
+
 }

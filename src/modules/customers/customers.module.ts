@@ -7,6 +7,7 @@ import { CustomersController } from './controller/customer.controller';
 import { LoggerModule } from 'src/common/logger/logger.module';
 import { AuthorizationGuard } from 'src/common/guards/authorization/authorization.guard';
 import { AuthModule } from '../auths/auths.module';
+import { CloudinaryProvider } from 'src/providers/cloudinary.provider';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { AuthModule } from '../auths/auths.module';
     AuthModule
   ],
   controllers: [CustomersController],
-  providers: [CustomerService, CustomerRepository, AuthorizationGuard],
+  providers: [CustomerService, CustomerRepository, AuthorizationGuard, CloudinaryProvider],
   exports: [CustomerService],
 })
 export class CustomersModule {}
