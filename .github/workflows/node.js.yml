@@ -17,14 +17,14 @@ jobs:
       image-tag: ${{ steps.build.outputs.image-tag }}  # Pass image tag to the push-image job
 
     steps:
-      # Step 1: Checkout the repository
+      # Step 1: Checkout the repository (Updated to v3)
       - uses: actions/checkout@v3
 
       # Step 2: Get the current branch name
       - name: Get current branch name
         run: echo "Branch name is ${{ github.ref_name }}"
 
-      # Step 3: Set up Node.js environment
+      # Step 3: Set up Node.js environment (Updated to v3)
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
@@ -42,7 +42,7 @@ jobs:
         run: |
           IMAGE_TAG=${GITHUB_SHA}
           docker build -t my-app:${IMAGE_TAG} .
-          echo "::set-output name=image-tag::${IMAGE_TAG}"
+          echo "image-tag=${IMAGE_TAG}" >> $GITHUB_ENV  # Use Environment File instead of set-output
 
   # Job 2: Push Docker image
   push-image:
@@ -51,8 +51,8 @@ jobs:
     if: github.ref == 'refs/heads/production' || github.ref == 'refs/heads/develop'  # Push only for these branches
 
     steps:
-      # Step 1: Checkout the repository (to access Dockerfile and project context)
-      - uses: actions/checkout@v2
+      # Step 1: Checkout the repository (Updated to v3)
+      - uses: actions/checkout@v3
 
       # Step 2: Set up Docker Buildx (for advanced builds)
       - name: Set up Docker Buildx
@@ -68,6 +68,6 @@ jobs:
       # Step 4: Push the Docker image
       - name: Push Docker image
         run: |
-          IMAGE_TAG=${{ needs.build.outputs.image-tag }}
+          IMAGE_TAG=${{ env.image-tag }}  # Use env for accessing the image tag
           docker tag my-app:${IMAGE_TAG} my-dockerhub-username/my-app:${{ github.ref_name }}
           docker push my-dockerhub-username/my-app:${{ github.ref_name }}
