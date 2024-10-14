@@ -20,14 +20,6 @@ jobs:
       # Step 1: Checkout the repository
       - uses: actions/checkout@v3
 
-      # Step 2: Build Docker image and set the IMAGE_TAG as an output
-      - name: Build Docker image
-        id: build  # Ensure you set an id to use it for output
-        run: |
-          IMAGE_TAG=${GITHUB_SHA}
-          docker build -t banking:${IMAGE_TAG} .
-          echo "IMAGE_TAG=${IMAGE_TAG}"  # Output for debugging
-          echo "::set-output name=image-tag::${IMAGE_TAG}"  # Set IMAGE_TAG as output
 
   # Job 2: Push Docker image
   push-image:
@@ -49,5 +41,6 @@ jobs:
       - name: Push Docker image
         run: |
           IMAGE_TAG=${GITHUB_SHA}
+          docker build -t banking:${IMAGE_TAG} .
           docker tag banking:${IMAGE_TAG} phat99/banking:${IMAGE_TAG}
           docker push phat99/banking:${IMAGE_TAG}
