@@ -43,6 +43,8 @@ jobs:
           IMAGE_TAG=${GITHUB_SHA}
           docker build -t banking:${IMAGE_TAG} .
           echo "image-tag=${IMAGE_TAG}" >> $GITHUB_ENV  # Use Environment File instead of set-output
+        outputs:
+          image-tag: ${{ steps.build.outputs.image-tag }}
 
   # Job 2: Push Docker image
   push-image:
