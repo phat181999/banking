@@ -10,26 +10,29 @@ on:
       - develop
 
 jobs:
-  # Job 1: Build the application
+  # Job 1: Build the application and Docker image
   build:
     runs-on: ubuntu-latest
+    outputs:
+      image-tag: ${{ steps.build.outputs.image-tag }}  # Pass image-tag as an output from this job
+
     steps:
       # Step 1: Checkout the repository
       - uses: actions/checkout@v3
 
-      # Step 2: Build Docker image
+      # Step 2: Build Docker image and set the IMAGE_TAG as an output
       - name: Build Docker image
-        id: build
+        id: build  # Ensure you set an id to use it for output
         run: |
           IMAGE_TAG=${GITHUB_SHA}
           docker build -t banking:${IMAGE_TAG} .
-          echo "image-tag=${IMAGE_TAG}" >> $GITHUB_ENV  # Store IMAGE_TAG in environment
+          echo "IMAGE_TAG=${IMAGE_TAG}"  # Output for debugging
           echo "::set-output name=image-tag::${IMAGE_TAG}"  # Set IMAGE_TAG as output
 
   # Job 2: Push Docker image
   push-image:
     runs-on: ubuntu-latest
-    needs: build  # Ensure the 'build' job runs first
+    needs: build  # Ensure 'build' job runs first
 
     steps:
       # Step 1: Checkout the repository
@@ -39,10 +42,10 @@ jobs:
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}  # Docker Hub username stored as GitHub secret
-          password: ${{ secrets.DOCKER_PASSWORD }}  # Docker Hub password stored as GitHub secret
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # Step 3: Push Docker image using the same IMAGE_TAG
+      # Step 3: Push Docker image using the same IMAGE_TAG from the build job
       - name: Push Docker image
         run: |
           IMAGE_TAG=${{ needs.build.outputs.image-tag }}  # Retrieve the IMAGE_TAG from the build job
