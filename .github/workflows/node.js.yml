@@ -69,5 +69,5 @@ jobs:
       - name: Push Docker image
         run: |
           IMAGE_TAG=${{ env.image-tag }}  # Use env for accessing the image tag
-          docker tag banking:${IMAGE_TAG} my-dockerhub-username/banking:${{ github.ref_name }}
-          docker push my-dockerhub-username/banking:${{ github.ref_name }}
+          docker tag banking:${IMAGE_TAG} phat99/banking:${{ github.ref_name }}
+          docker push phat99/banking:${{ github.ref_name }}
