@@ -68,7 +68,8 @@ jobs:
       # Step 4: Push the Docker image
       - name: Push Docker image
         run: |
-          docker build --tag=banking .
-          docker tag banking phat99/banking
-          docker push phat99/banking
+          IMAGE_TAG=${{ needs.build.outputs.image-tag }}  # Retrieve the IMAGE_TAG from the build job
+          docker tag banking:${IMAGE_TAG} phat99/banking:${IMAGE_TAG}
+          docker push phat99/banking:${IMAGE_TAG}
+
 
