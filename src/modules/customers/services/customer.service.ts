@@ -5,6 +5,10 @@ import { CustomersEntity } from '../entities/customers.entity';
 import { CustomLoggerService } from 'src/common/logger/logger.service';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
+import { CloudinaryResponse } from '../dtos/cloudinary-response.dto';
+import { v2 as cloudinary } from 'cloudinary';
+import { UpdateCustomerDTO } from '../dtos/update-customer.dto';
+const streamifier = require('streamifier');
 
 @Injectable()
 export class CustomerService {
@@ -15,18 +19,21 @@ export class CustomerService {
     private configService: ConfigService
   ) {}
 
-  async createCustomer(customer: CreateAccountDTO): Promise<CustomersEntity[]> {
+  async createCustomer(customer: CreateAccountDTO, file: Express.Multer.File): Promise<CustomersEntity[]> {
     try {
-      const { first_name, last_name, date_of_birth, address, phone, email, account_type, balance, password } = customer;
+      const { first_name, last_name, date_of_birth, address, phone, email, account_type, balance, password, avatar } = customer;
       if (!first_name || !last_name || !date_of_birth || !address || !phone || !email || !account_type || balance === undefined || !password) {
         throw new BadRequestException('Missing required fields');
       }
       const saltOrRound = this.configService.get<number>('SALTORROUNDS');
       const salt = await bcrypt.genSalt(+saltOrRound);
       const hashedPass = await bcrypt.hash(password, salt);
+
+      const avatarRes = await this.uploadFile(file);
       const createCustomer = {
         ...customer,
-        password: hashedPass
+        password: hashedPass,
+        avatar: avatarRes.url
       }
       return await this.customerRepo.createCustomerRepo(createCustomer);
     } catch(error) {
@@ -44,9 +51,9 @@ export class CustomerService {
     }
   }
 
-  async getCustomer(customer_id: number): Promise<CustomersEntity[]> {
+  async getCustomerById(customerId: string): Promise<CustomersEntity[]> {
     try {
-      const customer = await this.customerRepo.getCustomerRepo(customer_id);
+      const customer = await this.customerRepo.getCustomerRepo(customerId);
       if(!customer) {
         throw new BadRequestException('Customer Not Found!');
       }
@@ -59,8 +66,12 @@ export class CustomerService {
 
   public async login(email: string, password: string): Promise<CustomersEntity> {
     try {
+      const emailExist = await this.customerRepo.getCustomerByEmail(email);
+      if(emailExist.lenght === 0) {
+        throw new BadRequestException('Customer Not Found!');
+      }
       const customer = await this.customerRepo.loginCustomerRepo(email, password);
-      return customer;
+      return customer[0];
     } catch (error) {
       this.logger.error(`Login failed for email: ${email}`, error);
     }
@@ -68,14 +79,55 @@ export class CustomerService {
 
   public async getCustomerByEmail(email: string): Promise<CustomersEntity> {
     try {
-      const result =  await this.customerRepo.getCustomerByEmail(email);
+      const result = await this.customerRepo.getCustomerByEmail(email);
       if(result.lenght === 0) {
         throw new BadRequestException('Customer Not Found!');
-      } 
+      }
       return result;
     }catch(error){
       this.logger.error(`getCustomerByEmail: ${email}`, error);
       throw new InternalServerErrorException('An error occurred while fetching the customer.');
+    }
+  }
+
+  async uploadFile(file: Express.Multer.File): Promise<CloudinaryResponse> {
+    return new Promise<CloudinaryResponse>((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        (error, result) => {
+          if (error) return reject(error);
+          resolve(result);
+        },
+      );
+
+      streamifier.createReadStream(file.buffer).pipe(uploadStream);
+    });
+  }
+
+  async updateCustomerById(customerId: string, customer: UpdateCustomerDTO): Promise<CustomersEntity> {
+    try {
+      const customerIdExist = await this.customerRepo.getCustomerRepo(customerId);
+      if(!customerIdExist) {
+        throw new BadRequestException('Customer Not Found!');
+      }
+      const customerUpdate = await this.customerRepo.updateCustomerById(customerId, customer);
+      return customerUpdate;
+    } catch(error) {
+      this.logger.error(`Failure Update Customer`, error);
+      throw error;
+    }
+  }
+
+  async deleteCustomerById(customerId: string): Promise<CustomersEntity> {
+    try {
+      const customerIdExist = await this.customerRepo.getCustomerRepo(customerId);
+      if(!customerIdExist) {
+        throw new BadRequestException('Customer Not Found!');
+      }
+      const customer = await this.customerRepo.deleteCustomer(customerId);
+      return customer;
+    } catch(error) {
+      this.logger.error(`Failure Update Customer`, error);
+      throw error;
     }
   }
 }

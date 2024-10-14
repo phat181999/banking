@@ -2,7 +2,7 @@ import { Loans } from 'src/modules/loans/entities/loans.entity';
 import { Transactions } from 'src/modules/transactions/entities/transactions.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
-@Entity()
+@Entity({ name: 'customer'})
 export class CustomersEntity {
   @PrimaryGeneratedColumn()
   customer_id: number;
@@ -30,6 +30,9 @@ export class CustomersEntity {
 
   @Column()
   password: string;
+
+  @Column()
+  avatar: string;
 
   @Column({default: 'USER'})
   role: string;
