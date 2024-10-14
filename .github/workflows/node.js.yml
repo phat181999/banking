@@ -48,13 +48,6 @@ jobs:
       # Step 3: Push Docker image using the same IMAGE_TAG from the build job
       - name: Push Docker image
         run: |
-          IMAGE_TAG=${{ needs.build.outputs.image-tag }}  # Retrieve the IMAGE_TAG from the build job
-
-          # Check if IMAGE_TAG is not empty
-          if [[ -z "$IMAGE_TAG" ]]; then
-            echo "Error: IMAGE_TAG is empty!"
-            exit 1
-          fi
-
+          IMAGE_TAG=${GITHUB_SHA}
           docker tag banking:${IMAGE_TAG} phat99/banking:${IMAGE_TAG}
           docker push phat99/banking:${IMAGE_TAG}
